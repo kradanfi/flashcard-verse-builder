@@ -6,17 +6,21 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { BookOpen, Send, Loader2 } from "lucide-react";
+import { BookOpen, Send, Loader2, Eye, EyeOff } from "lucide-react";
 import FlashcardDisplay from "@/components/FlashcardDisplay";
 
 interface Vocabulary {
   word: string;
   translation: string;
+  remembered?: boolean;
+  difficulty?: 'easy' | 'medium' | 'hard';
 }
 
 const Index = () => {
   const [topic, setTopic] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [secretKey, setSecretKey] = useState("");
+  const [showSecretKey, setShowSecretKey] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [vocabularies, setVocabularies] = useState<Vocabulary[]>([]);
   const { toast } = useToast();
@@ -46,15 +50,21 @@ const Index = () => {
     console.log("Sending request to webhook:", webhookUrl, "with topic:", topic);
 
     try {
+      const requestBody: any = {
+        topic: topic,
+        timestamp: new Date().toISOString(),
+      };
+
+      if (secretKey.trim()) {
+        requestBody.secretKey = secretKey;
+      }
+
       const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          topic: topic,
-          timestamp: new Date().toISOString(),
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
@@ -63,7 +73,12 @@ const Index = () => {
         
         // Expected format: { vocabularies: [{ word: "...", translation: "..." }] }
         if (data.vocabularies && Array.isArray(data.vocabularies)) {
-          setVocabularies(data.vocabularies);
+          const vocabsWithDefaults = data.vocabularies.map((vocab: any) => ({
+            ...vocab,
+            remembered: false,
+            difficulty: 'medium' as const
+          }));
+          setVocabularies(vocabsWithDefaults);
           toast({
             title: "สำเร็จ!",
             description: `ได้รับคำศัพท์ ${data.vocabularies.length} คำ`,
@@ -84,6 +99,12 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const updateVocabulary = (index: number, updates: Partial<Vocabulary>) => {
+    setVocabularies(prev => prev.map((vocab, i) => 
+      i === index ? { ...vocab, ...updates } : vocab
+    ));
   };
 
   return (
@@ -142,6 +163,36 @@ const Index = () => {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="secretKey" className="text-sm font-medium text-gray-700">
+                  Secret Key (ถ้ามี)
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="secretKey"
+                    type={showSecretKey ? "text" : "password"}
+                    value={secretKey}
+                    onChange={(e) => setSecretKey(e.target.value)}
+                    placeholder="ใส่ secret key ของคุณ"
+                    className="h-12 pr-12"
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent"
+                    onClick={() => setShowSecretKey(!showSecretKey)}
+                  >
+                    {showSecretKey ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
               <Button 
                 type="submit" 
                 className="w-full h-12 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-200"
@@ -167,7 +218,11 @@ const Index = () => {
         {vocabularies.length > 0 && (
           <>
             <Separator className="my-8" />
-            <FlashcardDisplay vocabularies={vocabularies} topic={topic} />
+            <FlashcardDisplay 
+              vocabularies={vocabularies} 
+              topic={topic} 
+              onUpdateVocabulary={updateVocabulary}
+            />
           </>
         )}
       </div>
