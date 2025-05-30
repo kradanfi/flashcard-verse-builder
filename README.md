@@ -1,73 +1,113 @@
-# Welcome to your Lovable project
 
-## Project info
+# Flashcard Verse Builder
 
-**URL**: https://lovable.dev/projects/1ce51e89-30fc-4aef-87a4-17df9a49dd35
+A modern web application for generating vocabulary flashcards using webhooks. Built with React, TypeScript, and Tailwind CSS.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 🎯 Generate flashcards from any topic
+- 🔗 Webhook integration for dynamic content
+- 🔐 Secure secret key support
+- 📚 Interactive flashcard display with flip animation
+- ✅ Mark cards as remembered
+- 🎚️ Difficulty level indicators
+- 📱 Fully responsive design
 
-**Use Lovable**
+## Live Demo
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1ce51e89-30fc-4aef-87a4-17df9a49dd35) and start prompting.
+Visit the live application: [https://yourusername.github.io/flashcard-verse-builder/](https://yourusername.github.io/flashcard-verse-builder/)
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js 18 or higher
+- npm or yarn
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/flashcard-verse-builder.git
+cd flashcard-verse-builder
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Install dependencies:
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open [http://localhost:8080](http://localhost:8080) in your browser.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Usage
 
-**Use GitHub Codespaces**
+1. Enter a topic for vocabulary learning (e.g., "Animals", "Food", "Colors")
+2. Provide a webhook URL that returns vocabulary data
+3. Optionally add a secret key for secure webhook calls
+4. Click "สร้าง Flashcard" to generate your flashcards
+5. Use the interactive flashcards to study vocabulary
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Webhook Format
 
-## What technologies are used for this project?
+Your webhook should return JSON in this format:
+```json
+{
+  "vocabularies": [
+    {
+      "word": "Apple",
+      "translation": "แอปเปิล"
+    },
+    {
+      "word": "Banana", 
+      "translation": "กล้วย"
+    }
+  ]
+}
+```
 
-This project is built with:
+## Deployment
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### GitHub Pages (Automatic)
 
-## How can I deploy this project?
+1. Fork this repository
+2. Go to repository Settings > Pages
+3. Set source to "GitHub Actions"
+4. Push changes to main branch - deployment happens automatically
 
-Simply open [Lovable](https://lovable.dev/projects/1ce51e89-30fc-4aef-87a4-17df9a49dd35) and click on Share -> Publish.
+### Manual Deployment
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+npm run build
+# Deploy the `dist` folder to your hosting service
+```
 
-Yes, you can!
+## Technologies Used
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- **Frontend Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui + Radix UI
+- **Icons**: Lucide React
+- **Data Fetching**: TanStack Query
+- **Routing**: React Router DOM
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## Support
+
+If you encounter any issues or have questions, please [open an issue](https://github.com/yourusername/flashcard-verse-builder/issues).
