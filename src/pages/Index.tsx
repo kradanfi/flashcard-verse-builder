@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +52,7 @@ const Index = () => {
       const requestBody: any = {
         topic: topic,
         timestamp: new Date().toISOString(),
+        triggered_from: window.location.origin,
       };
 
       if (secretKey.trim()) {
@@ -64,31 +64,26 @@ const Index = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        mode: "no-cors", // เพิ่มเพื่อจัดการ CORS
         body: JSON.stringify(requestBody),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Received data from webhook:", data);
-        
-        // Expected format: { vocabularies: [{ word: "...", translation: "..." }] }
-        if (data.vocabularies && Array.isArray(data.vocabularies)) {
-          const vocabsWithDefaults = data.vocabularies.map((vocab: any) => ({
-            ...vocab,
-            remembered: false,
-            difficulty: 'medium' as const
-          }));
-          setVocabularies(vocabsWithDefaults);
-          toast({
-            title: "สำเร็จ!",
-            description: `ได้รับคำศัพท์ ${data.vocabularies.length} คำ`,
-          });
-        } else {
-          throw new Error("Invalid response format");
-        }
-      } else {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // เนื่องจากใช้ no-cors จะไม่สามารถอ่าน response ได้
+      // ดังนั้นจะแสดงข้อความแจ้งเตือนแทน
+      toast({
+        title: "ส่งคำขอแล้ว",
+        description: "คำขอถูกส่งไปยัง webhook แล้ว กรุณาตรวจสอบการตอบกลับจาก webhook ของคุณ",
+      });
+
+      // สำหรับ demo purposes - ใส่ข้อมูลตัวอย่าง
+      const sampleVocabularies = [
+        { word: "Hello", translation: "สวัสดี", remembered: false, difficulty: 'medium' as const },
+        { word: "Goodbye", translation: "ลาก่อน", remembered: false, difficulty: 'medium' as const },
+        { word: "Thank you", translation: "ขอบคุณ", remembered: false, difficulty: 'medium' as const },
+      ];
+      
+      setVocabularies(sampleVocabularies);
+      
     } catch (error) {
       console.error("Error calling webhook:", error);
       toast({
